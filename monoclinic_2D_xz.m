@@ -6,6 +6,10 @@ function [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     Eta11,Eta13,Eta15,Eta33,Eta35,Eta55,...
     plot_interval,...
     save_figure,path)
+%% create folder for figures
+if ~exist(path,'dir')
+    mkdir(path)
+end
 %% PML
 beta0=ones(nx,nz).*1000*(nPML+1)*log(1/R)/2/lp/dx;
 beta1=zeros(nx,nz);
@@ -274,7 +278,6 @@ for l=2:nt-1
         axis on;
         ax3=plot([lp+1,nx-lp-1]*dx,[lp+1,lp+1]*dz,'color','blue');
         axis on;
-        shg;
         legend([ax2,ax3,ax4],...
             'source','PML boundary','receiver',...
             'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
