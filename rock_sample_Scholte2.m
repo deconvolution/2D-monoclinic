@@ -22,7 +22,7 @@ fluid=find(A==0);
 dt=10^-9;
 dx=10^-5;
 dz=10^-5;
-nt=5000*10;
+nt=4*10^5;
 nx=size(A,1);
 nz=size(A,2);
 
@@ -131,7 +131,7 @@ src3=src1;
 src3=1*[singles];
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='D';
+source_type='P';
 
 % point interval in time steps
 plot_interval=500;
