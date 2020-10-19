@@ -85,7 +85,7 @@ src3=1*[singles];
 source_type='D';
 plot_interval=500;
 save_figure=1;
-path='./monoclinic_interface/';
+path='./rock_sample_PML/';
 %%
 [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     r1,r3,...

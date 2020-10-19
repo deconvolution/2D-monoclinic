@@ -278,7 +278,9 @@ for l=2:nt-1
         legend([ax2,ax3,ax4],...
             'source','PML boundary','receiver',...
             'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
-        saveas(gcf,[path num2str(10^5+(l+1)) '.png']);
+        if save_figure==1
+            saveas(gcf,[path num2str(10^5+(l+1)) '.png']);
+        end
     end
     fprintf('\n time step=%d/%d',l+1,nt);
     fprintf('\n    epalsed time=%.2fs',toc);
