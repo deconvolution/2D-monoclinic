@@ -163,5 +163,3 @@ for i=1:length(Nr)
     ylabel('v3 [m/s]');
     title(num2str(Nr(i)));
 end
-%%
-mfilename('fullpath')
