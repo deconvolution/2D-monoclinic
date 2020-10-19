@@ -228,7 +228,6 @@ for l=2:nt-1
         axis on;
         ax3=plot([lp+1,nx-lp-1]*dx,[lp+1,lp+1]*dz,'color','blue');
         axis on;
-        shg;
         
         subplot(2,3,2)
         imagesc([1,nx]*dx,[1,nz]*dz,sigmas33',.1*[min(sigmas33,[],'all'),max(sigmas33,[],'all')+10^-12]);
