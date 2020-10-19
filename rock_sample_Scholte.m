@@ -22,7 +22,7 @@ fluid=find(A==0);
 dt=10^-9;
 dx=10^-5;
 dz=10^-5;
-nt=5000*10;
+nt=4*10^5;
 nx=size(A,1);
 nz=size(A,2);
 
@@ -131,7 +131,7 @@ src3=src1;
 src3=1*[singles];
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='D';
+source_type='P';
 
 % point interval in time steps
 plot_interval=500;
@@ -140,7 +140,8 @@ plot_interval=500;
 save_figure=1;
 
 % figure path
-path='./rock_sample_Scholte/';
+p2=mfilename('fullpath');
+path=[p2 '/'];
 %% pass parameters to solver
 [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     r1,r3,...
@@ -162,3 +163,5 @@ for i=1:length(Nr)
     ylabel('v3 [m/s]');
     title(num2str(Nr(i)));
 end
+%%
+mfilename('fullpath')
