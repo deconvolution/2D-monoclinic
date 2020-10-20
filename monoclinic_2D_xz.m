@@ -10,6 +10,7 @@ function [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
 if ~exist(path,'dir')
     mkdir(path)
 end
+n_picture=0;
 %% PML
 beta0=ones(nx,nz).*1000*(nPML+1)*log(1/R)/2/lp/dx;
 beta1=zeros(nx,nz);
@@ -37,8 +38,8 @@ R1=zeros(nt,length(r1));
 R3=zeros(nt,length(r3));
 ind_rec=sub2ind([nx,nz,3],r1/dx,r3/dz,ones(1,length(r1))*3);
 %% monoclinic 2D solver xz plane (symmetric plane)
-s1=s1/dx;
-s3=s3/dz;
+s1=round(s1/dx);
+s3=round(s3/dz);
 v1=zeros(nx,nz,3);
 v3=v1;
 
@@ -170,11 +171,12 @@ for l=2:nt-1
         +v3(:,:,3)...
         -dt*(beta1+beta3).*v3(:,:,2)...
         -dt*beta1.*beta3.*S;
+    
     for is=1:length(s1)
         ts(s1(is),s3(is))=src1(l,is);
         ts2(s1(is),s3(is))=src3(l,is);
     end
-
+    
     switch source_type
         case 'D'
             for is=1:length(s1)
@@ -281,11 +283,13 @@ for l=2:nt-1
             'source','PML boundary','receiver',...
             'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
         if save_figure==1
-            saveas(gcf,[path num2str(10^5+(l+1)) '.png']);
+            saveas(gcf,[path num2str(n_picture) '.png']);
+            n_picture=n_picture+1;
         end
     end
     fprintf('\n time step=%d/%d',l+1,nt);
     fprintf('\n    epalsed time=%.2fs',toc);
+    fprintf('\n    n_picture=%d',n_picture);
     d=clock;
     fprintf('\n    current time=%d %d %d %d %d %.0d',d(1),d(2),d(3),d(4),d(5),d(6));
 end
