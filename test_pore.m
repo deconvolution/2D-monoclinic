@@ -131,11 +131,11 @@ singles=rickerWave(freq,dt,nt,M);
 
 % give source signal to x direction
 src1=zeros(nt,1);
-src1=0*[singles];
+src1=1*[singles];
 
 % give source signal to z direction
 src3=src1;
-src3=0*[singles];
+src3=1*[singles];
 
 % receiver locations [m]
 r1=(2:10:(nx-1))*dx;
@@ -162,6 +162,11 @@ path=[p2 '/'];
     Eta11,Eta13,Eta15,Eta33,Eta35,Eta55,...
     plot_interval,...
     save_figure,path);
+%% write to gif
+sources=path;
+delaytime=.2;
+filename='animation';
+gifmaker(filename,delaytime,sources);
 %% plot recordings
 % Choose numer of reiceivers to plot. Nr is the array of receiver number.
 Nr=[6,10,14,16,18];

@@ -10,7 +10,7 @@ function [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
 if ~exist(path,'dir')
     mkdir(path)
 end
-n_picture=0;
+n_picture=1;
 %% PML
 beta0=ones(nx,nz).*1000*(nPML+1)*log(1/R)/2/lp/dx;
 beta1=zeros(nx,nz);

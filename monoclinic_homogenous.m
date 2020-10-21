@@ -2,8 +2,8 @@
 close all;
 clear all;
 dt=10^-3;
-dx=5;
-dz=5;
+dx=8;
+dz=8;
 nt=1401;
 
 nx=200;
@@ -48,12 +48,12 @@ Eta33=C11;
 Eta35=C11;
 Eta55=C11;
 
-C11(:)=2.699*10^9;
-C13(:)=1.574*10^9;
+C11(:)=lambda+2*mu;
+C13(:)=lambda;
 %C15(:)=-.558*10^9;
-C33(:)=2.6239*10^9;
+C33(:)=lambda+2*mu;
 %C35(:)=-.274*10^9;
-C55(:)=.698*10^9;
+C55(:)=mu;
 
 scale=0;
 Eta11=C11*scale;
@@ -75,7 +75,9 @@ src3=1*[singles];
 source_type='P';
 plot_interval=200;
 save_figure=1;
-path='./monoclinic_homogenous/';
+% figure path
+p2=mfilename('fullpath');
+path=[p2 '/'];
 %%
 [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     r1,r3,...
