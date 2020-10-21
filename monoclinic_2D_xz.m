@@ -92,13 +92,13 @@ for l=2:nt-1
     end
     %% compute sigma
     v1_x=reshape(AA2*reshape(v1(:,:,2),[nx*nz,1]),[nx,nz]);
-    v3_x=reshape(AA2*reshape(v3(:,:,2),[nx*nz,1]),[nx,nz]);
-    v1_z=reshape(AA4*reshape(v1(:,:,2),[nx*nz,1]),[nx,nz]);
+    v3_x=reshape(AA*reshape(v3(:,:,2),[nx*nz,1]),[nx,nz]);
+    v1_z=reshape(AA3*reshape(v1(:,:,2),[nx*nz,1]),[nx,nz]);
     v3_z=reshape(AA4*reshape(v3(:,:,2),[nx*nz,1]),[nx,nz]);
     
     v1_x2=reshape(AA2*reshape(v1(:,:,1),[nx*nz,1]),[nx,nz]);
-    v3_x2=reshape(AA2*reshape(v3(:,:,1),[nx*nz,1]),[nx,nz]);
-    v1_z2=reshape(AA4*reshape(v1(:,:,1),[nx*nz,1]),[nx,nz]);
+    v3_x2=reshape(AA*reshape(v3(:,:,1),[nx*nz,1]),[nx,nz]);
+    v1_z2=reshape(AA3*reshape(v1(:,:,1),[nx*nz,1]),[nx,nz]);
     v3_z2=reshape(AA4*reshape(v3(:,:,1),[nx*nz,1]),[nx,nz]);
     
     E=dt*v1_x+E;
@@ -156,17 +156,17 @@ for l=2:nt-1
         -dt*beta1.*beta3.*L;
     %% compute v
     M=dt*reshape(AA*reshape((sigmas11-p),[nx*nz,1]),[nx,nz])+M;
-    N=dt*reshape(AA3*reshape((sigmas13),[nx*nz,1]),[nx,nz])+N;
-    P=dt*reshape(AA*reshape((sigmas13),[nx*nz,1]),[nx,nz])+P;
+    N=dt*reshape(AA4*reshape((sigmas13),[nx*nz,1]),[nx,nz])+N;
+    P=dt*reshape(AA2*reshape((sigmas13),[nx*nz,1]),[nx,nz])+P;
     Q=dt*reshape(AA3*reshape((sigmas33-p),[nx*nz,1]),[nx,nz])+Q;
     R=dt*v1(:,:,2)+R;
     S=dt*v3(:,:,2)+S;
     v1(:,:,3)=dt./rho.*(reshape(AA*reshape((sigmas11-p),[nx*nz,1]),[nx,nz])+beta3.*M...
-        +reshape(AA3*reshape((sigmas13),[nx*nz,1]),[nx,nz])+beta1.*N)...
+        +reshape(AA4*reshape((sigmas13),[nx*nz,1]),[nx,nz])+beta1.*N)...
         +v1(:,:,3)...
         -dt*(beta1+beta3).*v1(:,:,2)...
         -dt*beta1.*beta3.*R;
-    v3(:,:,3)=dt./rho.*(reshape(AA*reshape((sigmas13),[nx*nz,1]),[nx,nz])+beta3.*P...
+    v3(:,:,3)=dt./rho.*(reshape(AA2*reshape((sigmas13),[nx*nz,1]),[nx,nz])+beta3.*P...
         +reshape(AA3*reshape((sigmas33-p),[nx*nz,1]),[nx,nz])+beta1.*Q)...
         +v3(:,:,3)...
         -dt*(beta1+beta3).*v3(:,:,2)...
@@ -258,10 +258,10 @@ for l=2:nt-1
         ylim([1,nt]*dt);
         
         subplot(2,3,6)
-        imagesc([1,nx]*dx,[1,nz]*dz,C55');
+        imagesc([1,nx]*dx,[1,nz]*dz,C33');
         xlabel('x [m]');
         ylabel('z [m]');
-        title('C55 [Pa]');
+        title('C33 [Pa]');
         colorbar;
         hold on;
         ax2=scatter(s1*dx,s3*dz,30,[1,0,0],'o');

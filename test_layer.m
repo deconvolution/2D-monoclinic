@@ -3,17 +3,19 @@ close all;
 clear all;
 
 % load image
-A=ones(200,200);
+A=zeros(400,200);
 xc=150;
 zc=150;
 
-A(30:200-30,140:170)=0;
+n=numel(A);
 
 % add 10 layers around the original image for air
 A=[repmat(A(1,:),[12,1]);
     A;
     repmat(A(end,:),[12,1])];
 A=[repmat(A(:,1),[1,12]),A,repmat(A(:,end),[1,12])];
+
+A(:,50:size(A,2)-22)=1;
 
 % find solid locations
 solid=find(A==1);
@@ -67,20 +69,20 @@ lambda=10^9;
 % assign solid with its stiffness
 C11(solid)=lambda+2*mu;
 C13(solid)=lambda;
-C15(solid)=0;
+%C15(solid)=.1*lambda;
 C33(solid)=lambda+2*mu;
-C35(solid)=0;
+%C35(solid)=-.01*lambda;
 C55(solid)=mu;
 rho(solid)=10^3;
 
 % assign air with its stiffness
-C11(fluid)=1145*340^2;
-C13(fluid)=1145*340^2;
+C11(fluid)=lambda;
+C13(fluid)=lambda;
 C15(fluid)=0;
-C33(fluid)=1145*340^2;
+C33(fluid)=lambda;
 C35(fluid)=0;
 C55(fluid)=0;
-rho(fluid)=1145;
+rho(fluid)=900;
 
 % find surrounding layers
 [a1,b1]=meshgrid(1:lp+2,1:nz);
@@ -119,7 +121,7 @@ s1=fix(nx/2)*dx;
 s3=(lp+2)*dz;
 
 % source frequency [Hz]
-freq=10^5*6;
+freq=10^6*1.5;
 
 % source signal
 singles=rickerWave(freq,dt,nt,M);
