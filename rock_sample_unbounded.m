@@ -32,12 +32,12 @@ fluid=find(A==0);
 dt=10^-8;
 dx=5*10^-5;
 dz=5*10^-5;
-nt=5000;
+nt=400000;
 nx=size(A,1);
 nz=size(A,2);
 
 % PML layers
-lp=20;
+lp=10;
 
 % PML coefficient, usually 2
 nPML=2;
@@ -46,7 +46,7 @@ nPML=2;
 % Empirical values
 % lp=[10,20,30,40]
 % R=[.1,.01,.001,.0001]
-R=.001;
+R=.01;
 
 % generate empty density
 rho=zeros(nx,nz);
