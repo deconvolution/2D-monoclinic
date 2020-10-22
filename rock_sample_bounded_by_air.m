@@ -7,10 +7,10 @@ A=imread('NS.png');
 A=im2double(A)';
 
 % the rock surface cannot be fluid
-A(1,:)=1;
-A(end,:)=1;
-A(:,1)=1;
-A(:,end)=1;
+A(1:3,:)=1;
+A(end-2:end,:)=1;
+A(:,1:3)=1;
+A(:,end-3:end)=1;
 
 % add 12 layers around the original image for air
 A=[repmat(A(1,:),[12,1]);
