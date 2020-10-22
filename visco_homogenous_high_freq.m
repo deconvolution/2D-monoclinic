@@ -102,7 +102,7 @@ rho(IND_air_layer)=1145;
 %}
 
 % ratio for viscous term over stiffness term
-scale=10^-4;
+scale=10^-3;
 Eta11=C11*scale;
 Eta13=C13*scale;
 Eta15=C15*scale;
