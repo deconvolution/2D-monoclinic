@@ -34,10 +34,10 @@ nz=size(A,2);
 
 % receiver locations [m]
 r1=(2:10:(nx-1))*dx;
-r3=(ones(size(r1)))*(nz-11)*dz;
+r3=(ones(size(r1)))*(nz-13)*dz;
 
 % PML layers
-lp=10;
+lp=8;
 % PML coefficient, usually 2
 nPML=2;
 
@@ -45,7 +45,7 @@ nPML=2;
 % Empirical values
 % lp=[10,20,30,40]
 % R=[.1,.01,.001,.0001]
-R=.001;
+R=.1;
 
 % generate empty density
 rho=zeros(nx,nz);
@@ -71,7 +71,7 @@ mu=2.94*10^3*(1490)^2;
 lambda=2.94*10^3*(2860)^2-2*mu;
 
 % assign solid with its stiffness
-C11(solid)=lambda;
+C11(solid)=lambda+2*mu;
 C13(solid)=lambda;
 C15(solid)=0;
 C33(solid)=lambda+2*mu;
@@ -89,12 +89,12 @@ C55(fluid)=0;
 rho(fluid)=1145;
 
 % find surrounding layers
-[a1,b1]=meshgrid(1:10,1:nz);
-[a2,b2]=meshgrid(nx-10+1:nx,1:nz);
-[a3,b3]=meshgrid(1:nx,1:10);
-[a4,b4]=meshgrid(1:nx,nz-10+1:nz);
-IND_air_layer=sub2ind([nx,nz],[reshape(a1,[1,10*nz]),reshape(a2,[1,10*nz]),reshape(a3,[1,10*nx]),reshape(a4,[1,10*nx])],...
-    [reshape(b1,[1,10*nz]),reshape(b2,[1,10*nz]),reshape(b3,[1,10*nx]),reshape(b4,[1,10*nx])]);
+[a1,b1]=meshgrid(1:12,1:nz);
+[a2,b2]=meshgrid(nx-12+1:nx,1:nz);
+[a3,b3]=meshgrid(1:nx,1:12);
+[a4,b4]=meshgrid(1:nx,nz-12+1:nz);
+IND_air_layer=sub2ind([nx,nz],[reshape(a1,[1,12*nz]),reshape(a2,[1,12*nz]),reshape(a3,[1,12*nx]),reshape(a4,[1,12*nx])],...
+    [reshape(b1,[1,12*nz]),reshape(b2,[1,12*nz]),reshape(b3,[1,12*nx]),reshape(b4,[1,12*nx])]);
 
 % assign surrounding layers with air
 C11(IND_air_layer)=1145*340^2;
@@ -120,7 +120,7 @@ M=2.7;
 
 % source locations
 s1=fix(nx/2)*dx;
-s3=11*dz;
+s3=14*dz;
 
 % source frequency [Hz]
 freq=5*10^6;
@@ -157,9 +157,14 @@ path=[p2 '/'];
     Eta11,Eta13,Eta15,Eta33,Eta35,Eta55,...
     plot_interval,...
     save_figure,path);
+%% write to gif
+sources=path;
+delaytime=.2;
+filename='animation';
+gifmaker(filename,delaytime,sources);
 %% plot recordings
 % Choose numer of reiceivers to plot. Nr is the array of receiver number.
-Nr=[3,4,5];
+Nr=[6,10,14,16,18];
 
 figure('name','v3 [m/s]');
 for i=1:length(Nr)

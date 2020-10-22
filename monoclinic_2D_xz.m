@@ -252,6 +252,7 @@ for l=2:nt-1
         
         subplot(2,3,5)
         imagesc([1,length(r1)],[1,(l+1)]*dt,R3(1:l+1,:));
+        colorbar;
         xlabel('Nr');
         ylabel('t [s]');
         title('R3 [m/s]');
