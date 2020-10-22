@@ -25,7 +25,7 @@ fluid=find(A==0);
 dt=10^-8;
 dx=5*10^-5;
 dz=5*10^-5;
-nt=5000;
+nt=1000;
 nx=size(A,1);
 nz=size(A,2);
 

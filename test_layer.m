@@ -3,18 +3,19 @@ close all;
 clear all;
 
 % load image
-A=zeros(400,200);
+A=zeros(200,200);
 xc=150;
 zc=150;
 
 n=numel(A);
 
-% add 10 layers around the original image for air
+% add 12 layers around the original image for air
 A=[repmat(A(1,:),[12,1]);
     A;
     repmat(A(end,:),[12,1])];
 A=[repmat(A(:,1),[1,12]),A,repmat(A(:,end),[1,12])];
 
+% place solid layer
 A(:,50:size(A,2)-22)=1;
 
 % find solid locations
@@ -41,7 +42,7 @@ nPML=2;
 % Empirical values
 % lp=[10,20,30,40]
 % R=[.1,.01,.001,.0001]
-R=.001;
+R=1;
 
 % generate empty density
 rho=zeros(nx,nz);
@@ -92,17 +93,6 @@ rho(fluid)=900;
 IND_air_layer=sub2ind([nx,nz],[reshape(a1,[1,(lp+2)*nz]),reshape(a2,[1,(lp+2)*nz]),reshape(a3,[1,(lp+2)*nx]),reshape(a4,[1,(lp+2)*nx])],...
     [reshape(b1,[1,(lp+2)*nz]),reshape(b2,[1,(lp+2)*nz]),reshape(b3,[1,(lp+2)*nx]),reshape(b4,[1,(lp+2)*nx])]);
 
-% assign surrounding layers with air
-%{
-C11(IND_air_layer)=1145*340^2;
-C13(IND_air_layer)=1145*340^2;
-C15(IND_air_layer)=0;
-C33(IND_air_layer)=1145*340^2;
-C35(IND_air_layer)=0;
-C55(IND_air_layer)=0;
-rho(IND_air_layer)=1145;
-%}
-
 % ratio for viscous term over stiffness term
 scale=0;
 Eta11=C11*scale;
@@ -118,7 +108,7 @@ M=2.7;
 
 % source locations
 s1=fix(nx/2)*dx;
-s3=(lp+2)*dz;
+s3=fix(nz/2)*dz;
 
 % source frequency [Hz]
 freq=10^6*1.5;
