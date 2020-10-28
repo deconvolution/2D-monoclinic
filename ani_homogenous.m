@@ -65,11 +65,11 @@ mu=10^9;
 lambda=10^9;
 
 % assign solid with its stiffness
-C11(solid)=lambda+2*mu;
+C11(solid)=lambda+2*mu-mu;
 C13(solid)=lambda;
-C15(solid)=.2*lambda;
-C33(solid)=lambda+2*mu;
-C35(solid)=.2*lambda;
+C15(solid)=0*lambda;
+C33(solid)=lambda+2*mu-mu;
+C35(solid)=0*lambda;
 C55(solid)=mu;
 rho(solid)=10^3;
 
