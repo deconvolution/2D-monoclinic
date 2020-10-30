@@ -210,7 +210,7 @@ for l=2:nt-1
         lim2(3,1)=min(.2*min(sigmas13,[],'all'),lim2(3,1));
         lim2(3,2)=max(.2*max(sigmas13,[],'all'),lim2(3,2));
         lim2(4,1)=min(.2*min(p,[],'all'),lim2(4,1));
-        lim2(4,2)=max(.2*max(p,[],'all'),lim2(4,2));
+        lim2(4,2)=max(max(p,[],'all'),lim2(4,2));
         
         
         hfig=figure('Visible','off');
