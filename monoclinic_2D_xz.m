@@ -203,20 +203,20 @@ for l=2:nt-1
     R3(l+1,:)=v3(ind_rec);
     %% plot
     if mod(l,plot_interval)==0 || l==nt-1
-        lim2(1,1)=min(.2*min(v3,[],'all'),lim2(1,1));
-        lim2(1,2)=max(.2*max(v3,[],'all'),lim2(1,2));
-        lim2(2,1)=min(.2*min(sigmas33,[],'all'),lim2(2,1));
-        lim2(2,2)=max(.2*max(sigmas33,[],'all'),lim2(2,2));
-        lim2(3,1)=min(.2*min(sigmas13,[],'all'),lim2(3,1));
-        lim2(3,2)=max(.2*max(sigmas13,[],'all'),lim2(3,2));
-        lim2(4,1)=min(.2*min(p,[],'all'),lim2(4,1));
-        lim2(4,2)=max(.2*max(p,[],'all'),lim2(4,2));
+        lim2(1,1)=min(min(v3,[],'all'),lim2(1,1));
+        lim2(1,2)=max(max(v3,[],'all'),lim2(1,2));
+        lim2(2,1)=min(min(sigmas33,[],'all'),lim2(2,1));
+        lim2(2,2)=max(max(sigmas33,[],'all'),lim2(2,2));
+        lim2(3,1)=min(min(sigmas13,[],'all'),lim2(3,1));
+        lim2(3,2)=max(max(sigmas13,[],'all'),lim2(3,2));
+        lim2(4,1)=min(min(p,[],'all'),lim2(4,1));
+        lim2(4,2)=max(max(p,[],'all'),lim2(4,2));
         
         
         hfig=figure('Visible','off');
         set(gcf,'position',[80,80,1300,600]);
         subplot(2,3,1)
-        imagesc([1,nx]*dx,[1,nz]*dz,v3(:,:,3)',.1*[lim2(1,1),lim2(1,2)+10^-12]);
+        imagesc([1,nx]*dx,[1,nz]*dz,v3(:,:,3)',.02*[lim2(1,1),lim2(1,2)+10^-12]);
         colorbar;
         xlabel({['x [m]']});
         ylabel({['z [m]']});
@@ -242,21 +242,21 @@ for l=2:nt-1
         axis on;
         
         subplot(2,3,2)
-        imagesc([1,nx]*dx,[1,nz]*dz,sigmas33',.1*[lim2(2,1),lim2(2,2)+10^-12]);
+        imagesc([1,nx]*dx,[1,nz]*dz,sigmas33',.02*[lim2(2,1),lim2(2,2)+10^-12]);
         xlabel('x [m]');
         ylabel('z [m]');
         title('\sigma_{s33} [Pa]');
         colorbar;
         
         subplot(2,3,4)
-        imagesc([1,nx]*dx,[1,nz]*dz,p',.1*[lim2(4,1),lim2(4,2)+10^-12]);
+        imagesc([1,nx]*dx,[1,nz]*dz,p',.02*[lim2(4,1),lim2(4,2)+10^-12]);
         xlabel('x [m]');
         ylabel('z [m]');
         title('p [Pa]');
         colorbar;
         
         subplot(2,3,3)
-        imagesc([1,nx]*dx,[1,nz]*dz,sigmas13',[lim2(3,1),lim2(3,2)+10^-12]);
+        imagesc([1,nx]*dx,[1,nz]*dz,sigmas13',.02*[lim2(3,1),lim2(3,2)+10^-12]);
         xlabel('x [m]');
         ylabel('z [m]');
         title('\sigma_{s13} [Pa]');
