@@ -4,8 +4,6 @@ clear all;
 
 % load image
 A=ones(300,300);
-xc=150;
-zc=150;
 
 n=numel(A);
 
@@ -25,7 +23,7 @@ fluid=find(A==0);
 dt=10^-8;
 dx=5*10^-5;
 dz=5*10^-5;
-nt=1000;
+nt=5000;
 nx=size(A,1);
 nz=size(A,2);
 
@@ -66,10 +64,10 @@ lambda=10^9;
 
 % assign solid with its stiffness
 C11(solid)=lambda+2*mu;
-C13(solid)=lambda;
-C15(solid)=.2*lambda;
+C13(solid)=lambda+10^8;
+%C15(solid)=.2*lambda;
 C33(solid)=lambda+2*mu;
-C35(solid)=.2*lambda;
+%C35(solid)=.2*lambda;
 C55(solid)=mu;
 rho(solid)=10^3;
 
@@ -126,7 +124,7 @@ singles=rickerWave(freq,dt,nt,M);
 
 % give source signal to x direction
 src1=zeros(nt,1);
-src1=0*[singles];
+src1=1*[singles];
 
 % give source signal to z direction
 src3=src1;
@@ -137,7 +135,7 @@ r1=(2:10:(nx-1))*dx;
 r3=(ones(size(r1)))*(nz-lp-1)*dz;
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='D';
+source_type='P';
 
 % point interval in time steps
 plot_interval=50;
