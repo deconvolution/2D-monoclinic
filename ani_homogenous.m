@@ -63,19 +63,11 @@ mu=10^9;
 lambda=10^9;
 
 % assign solid with its stiffness
-<<<<<<< HEAD
 C11(solid)=lambda+2*mu;
-C13(solid)=lambda+10^8;
-%C15(solid)=.2*lambda;
-C33(solid)=lambda+2*mu;
-%C35(solid)=.2*lambda;
-=======
-C11(solid)=lambda+2*mu-mu;
 C13(solid)=lambda;
 C15(solid)=0*lambda;
-C33(solid)=lambda+2*mu-mu;
+C33(solid)=lambda+2*mu;
 C35(solid)=0*lambda;
->>>>>>> a82a72cf17e259088e821290bfd6b4be85ff4a6d
 C55(solid)=mu;
 rho(solid)=10^3;
 
@@ -132,7 +124,7 @@ singles=rickerWave(freq,dt,nt,M);
 
 % give source signal to x direction
 src1=zeros(nt,1);
-src1=1*[singles];
+src1=0*[singles];
 
 % give source signal to z direction
 src3=src1;
@@ -143,7 +135,7 @@ r1=(2:10:(nx-1))*dx;
 r3=(ones(size(r1)))*(nz-lp-1)*dz;
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='P';
+source_type='D';
 
 % point interval in time steps
 plot_interval=50;
