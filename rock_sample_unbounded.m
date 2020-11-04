@@ -1,3 +1,11 @@
+%{
+Acoustic-elastic viscoelastic (Kelvin-Voigt) material
+velocity-stress-pressure 2D simulation.
+The simulation takes place in the symmetric plane-xz plane.
+PML can be implemented.
+This script is the main file for simulation. All of the inputs are passed
+to the solver
+%}
 %% input
 close all;
 clear all;
