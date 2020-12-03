@@ -3,7 +3,7 @@ close all;
 clear all;
 
 % load image
-A=ones(300,150);
+A=ones(150,150);
 
 A(:,1:30)=0;
 
@@ -72,7 +72,7 @@ C15(fluid)=0;
 C33(fluid)=lambdaf;
 C35(fluid)=0;
 C55(fluid)=0;
-rho=1000+sqrt(400)*randn(nx,nz);
+rho=1000+sqrt(0)*randn(nx,nz);
 
 % find surrounding layers
 [a1,b1]=meshgrid(1:lp+2,1:nz);

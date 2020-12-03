@@ -135,7 +135,7 @@ r1=(2:10:(nx-1));
 r3=(ones(size(r1)))*(nz-lp-1);
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='P';
+source_type='D';
 
 % point interval in time steps
 plot_interval=50;

@@ -85,15 +85,15 @@ for l=2:nt-1
         v3(:,:,l2)=v3(:,:,l2+1);
     end
     %% compute sigma
-    v1_x=D(v1(:,:,2),-1)/dx;
-    v3_x=D(v3(:,:,2),1)/dx;
-    v1_z=D(v1(:,:,2),3)/dz;
-    v3_z=D(v3(:,:,2),-3)/dz;
+    v1_x=D(v1(:,:,2),1)/dx;
+    v3_x=D(v3(:,:,2),-1)/dx;
+    v1_z=D(v1(:,:,2),-3)/dz;
+    v3_z=D(v3(:,:,2),3)/dz;
     
-    v1_x2=D(v1(:,:,1),-1)/dx;
-    v3_x2=D(v3(:,:,1),1)/dx;
-    v1_z2=D(v1(:,:,1),3)/dz;
-    v3_z2=D(v3(:,:,1),-3)/dz;
+    v1_x2=D(v1(:,:,1),1)/dx;
+    v3_x2=D(v3(:,:,1),-1)/dx;
+    v1_z2=D(v1(:,:,1),-3)/dz;
+    v3_z2=D(v3(:,:,1),3)/dz;
     
     E=dt*v1_x+E;
     F=dt*v1_z+F;
@@ -149,19 +149,19 @@ for l=2:nt-1
         -dt*(beta1+beta3).*p...
         -dt*beta1.*beta3.*L;
     %% compute v
-    M=dt*D(sigmas11-p,1)/dx+M;
-    N=dt*D(sigmas13,-3)/dz+N;
-    P=dt*D(sigmas13,-1)/dx+P;
-    Q=dt*D(sigmas13-p,3)/dz+Q;
+    M=dt*D(sigmas11-p,-1)/dx+M;
+    N=dt*D(sigmas13,3)/dz+N;
+    P=dt*D(sigmas13,1)/dx+P;
+    Q=dt*D(sigmas33-p,-3)/dz+Q;
     R=dt*v1(:,:,2)+R;
     S=dt*v3(:,:,2)+S;
-    v1(:,:,3)=dt./rho.*(D(sigmas11-p,1)/dx+beta3.*M...
-        +D(sigmas13,-3)+beta1.*N)/dz...
+    v1(:,:,3)=dt./rho.*(D(sigmas11-p,-1)/dx+beta3.*M...
+        +D(sigmas13,3)/dz+beta1.*N)/dz...
         +v1(:,:,3)...
         -dt*(beta1+beta3).*v1(:,:,2)...
         -dt*beta1.*beta3.*R;
-    v3(:,:,3)=dt./rho.*(D(sigmas13,-1)/dx+beta3.*P...
-        +D(sigmas33-p,3)/dz+beta1.*Q)...
+    v3(:,:,3)=dt./rho.*(D(sigmas13,1)/dx+beta3.*P...
+        +D(sigmas33-p,-3)/dz+beta1.*Q)...
         +v3(:,:,3)...
         -dt*(beta1+beta3).*v3(:,:,2)...
         -dt*beta1.*beta3.*S;
