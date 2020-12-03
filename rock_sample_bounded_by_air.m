@@ -33,8 +33,8 @@ nx=size(A,1);
 nz=size(A,2);
 
 % receiver locations [m]
-r1=(2:10:(nx-1))*dx;
-r3=(ones(size(r1)))*(nz-13)*dz;
+r1=(2:10:(nx-1));
+r3=(ones(size(r1)))*(nz-13);
 
 % PML layers
 lp=8;
@@ -119,8 +119,8 @@ Eta55=C55*scale;
 M=2.7;
 
 % source locations
-s1=fix(nx/2)*dx;
-s3=14*dz;
+s1=fix(nx/2);
+s3=14;
 
 % source frequency [Hz]
 freq=5*10^6;

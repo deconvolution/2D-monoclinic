@@ -36,10 +36,8 @@ beta3=beta0.*plane_grad3.^nPML;
 %% model configuration
 R1=zeros(nt,length(r1));
 R3=zeros(nt,length(r3));
-ind_rec=sub2ind([nx,nz,3],r1/dx,r3/dz,ones(1,length(r1))*3);
+ind_rec=sub2ind([nx,nz,3],r1,r3,ones(1,length(r1))*3);
 %% monoclinic 2D solver xz plane (symmetric plane)
-s1=round(s1/dx);
-s3=round(s3/dz);
 v1=zeros(nx,nz,3);
 v3=v1;
 lim2=zeros(4,2);
@@ -67,10 +65,6 @@ Q=sigmas11;
 R=sigmas11;
 S=sigmas11;
 
-AA=D(nx,nz,1)/dx;
-AA2=D(nx,nz,-1)/dx;
-AA3=D(nx,nz,3)/dz;
-AA4=D(nx,nz,-3)/dz;
 l=2;
 
 switch source_type
@@ -91,15 +85,15 @@ for l=2:nt-1
         v3(:,:,l2)=v3(:,:,l2+1);
     end
     %% compute sigma
-    v1_x=reshape(AA2*reshape(v1(:,:,2),[nx*nz,1]),[nx,nz]);
-    v3_x=reshape(AA*reshape(v3(:,:,2),[nx*nz,1]),[nx,nz]);
-    v1_z=reshape(AA3*reshape(v1(:,:,2),[nx*nz,1]),[nx,nz]);
-    v3_z=reshape(AA4*reshape(v3(:,:,2),[nx*nz,1]),[nx,nz]);
+    v1_x=D(v1(:,:,2),-1)/dx;
+    v3_x=D(v3(:,:,2),1)/dx;
+    v1_z=D(v1(:,:,2),3)/dz;
+    v3_z=D(v3(:,:,2),-3)/dz;
     
-    v1_x2=reshape(AA2*reshape(v1(:,:,1),[nx*nz,1]),[nx,nz]);
-    v3_x2=reshape(AA*reshape(v3(:,:,1),[nx*nz,1]),[nx,nz]);
-    v1_z2=reshape(AA3*reshape(v1(:,:,1),[nx*nz,1]),[nx,nz]);
-    v3_z2=reshape(AA4*reshape(v3(:,:,1),[nx*nz,1]),[nx,nz]);
+    v1_x2=D(v1(:,:,1),-1)/dx;
+    v3_x2=D(v3(:,:,1),1)/dx;
+    v1_z2=D(v1(:,:,1),3)/dz;
+    v3_z2=D(v3(:,:,1),-3)/dz;
     
     E=dt*v1_x+E;
     F=dt*v1_z+F;
@@ -122,7 +116,7 @@ for l=2:nt-1
         +sigmas11...
         -dt*(beta1+beta3).*sigmas11...
         -dt*beta1.*beta3.*I;
-
+    
     sigmas33=dt*.5*((C13-C11).*v1_x+beta3.*(C13-C11).*E...
         +(C35-C15).*v3_x+beta3.*(C35-C15).*G...
         +(C33-C13).*v3_z+beta1.*(C33-C13).*H...
@@ -155,19 +149,19 @@ for l=2:nt-1
         -dt*(beta1+beta3).*p...
         -dt*beta1.*beta3.*L;
     %% compute v
-    M=dt*reshape(AA*reshape((sigmas11-p),[nx*nz,1]),[nx,nz])+M;
-    N=dt*reshape(AA4*reshape((sigmas13),[nx*nz,1]),[nx,nz])+N;
-    P=dt*reshape(AA2*reshape((sigmas13),[nx*nz,1]),[nx,nz])+P;
-    Q=dt*reshape(AA3*reshape((sigmas33-p),[nx*nz,1]),[nx,nz])+Q;
+    M=dt*D(sigmas11-p,1)/dx+M;
+    N=dt*D(sigmas13,-3)/dz+N;
+    P=dt*D(sigmas13,-1)/dx+P;
+    Q=dt*D(sigmas13-p,3)/dz+Q;
     R=dt*v1(:,:,2)+R;
     S=dt*v3(:,:,2)+S;
-    v1(:,:,3)=dt./rho.*(reshape(AA*reshape((sigmas11-p),[nx*nz,1]),[nx,nz])+beta3.*M...
-        +reshape(AA4*reshape((sigmas13),[nx*nz,1]),[nx,nz])+beta1.*N)...
+    v1(:,:,3)=dt./rho.*(D(sigmas11-p,1)/dx+beta3.*M...
+        +D(sigmas13,-3)+beta1.*N)/dz...
         +v1(:,:,3)...
         -dt*(beta1+beta3).*v1(:,:,2)...
         -dt*beta1.*beta3.*R;
-    v3(:,:,3)=dt./rho.*(reshape(AA2*reshape((sigmas13),[nx*nz,1]),[nx,nz])+beta3.*P...
-        +reshape(AA3*reshape((sigmas33-p),[nx*nz,1]),[nx,nz])+beta1.*Q)...
+    v3(:,:,3)=dt./rho.*(D(sigmas13,-1)/dx+beta3.*P...
+        +D(sigmas33-p,3)/dz+beta1.*Q)...
         +v3(:,:,3)...
         -dt*(beta1+beta3).*v3(:,:,2)...
         -dt*beta1.*beta3.*S;
@@ -187,7 +181,6 @@ for l=2:nt-1
             v1(:,:,3)=v1(:,:,3)+1./rho.*reshape(.5*AA*reshape(ts,[nx*nz,1]),[nx,nz]);
             v3(:,:,3)=v3(:,:,3)+1./rho.*reshape(.5*AA3*reshape(ts2,[nx*nz,1]),[nx,nz]);
     end
-
     %% fixed boundary condition
     v1(1,:,3)=0;
     v1(end,:,3)=0;
@@ -227,8 +220,12 @@ for l=2:nt-1
         hold on;
         ax2=scatter(s1*dx,s3*dz,30,[1,0,0],'o');
         hold on;
+        for i=1:length(s1)
+            ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
+            hold on;
+        end
         for i=1:length(r1)
-            ax4=scatter(r1(i),r3(i),30,[0,1,1],'filled');
+            ax4=plot(r1(i)*dx,r3(i)*dz,'^','color',[0,1,1]);
             hold on;
         end
         ax3=plot([lp+1,lp+1]*dx,[lp+1,nz-lp-1]*dz,'color','blue');
@@ -277,10 +274,12 @@ for l=2:nt-1
         title('C33 [Pa]');
         colorbar;
         hold on;
-        ax2=scatter(s1*dx,s3*dz,30,[1,0,0],'o');
-        hold on;
+        for i=1:length(s1)
+            ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
+            hold on;
+        end
         for i=1:length(r1)
-            ax4=scatter(r1(i),r3(i),30,[0,1,1],'filled');
+            ax4=plot(r1(i)*dx,r3(i)*dz,'^','color',[0,1,1]);
             hold on;
         end
         ax3=plot([lp+1,lp+1]*dx,[lp+1,nz-lp-1]*dz,'color','blue');
@@ -296,7 +295,7 @@ for l=2:nt-1
             'source','PML boundary','receiver',...
             'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
         if save_figure==1
-            saveas(gcf,[path num2str(n_picture) '.png']);
+            print(gcf,[path num2str(n_picture) '.png'],'-dpng','-r200');
             n_picture=n_picture+1;
         end
     end

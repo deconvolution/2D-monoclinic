@@ -1,45 +1,20 @@
-function A=D(nx,nz,direction)
+function u2=D(u,direction)
 %%
-[i1,i2]=ind2sub([nx,nz],1:nx*nz);
-A=sparse(nx*nz,nx*nz);
 switch direction
     case 1
-        A(sub2ind([nx*nz,nx*nz],1:nx*nz,sub2ind([nx,nz],i1,i2)))=-1;
-        
-        boundary=find(i1==nx);
-        i1(boundary)=[];
-        i2(boundary)=[];
-        tt=1:nx*nz;
-        tt(boundary)=[];
-        A(sub2ind([nx*nz,nx*nz],tt,sub2ind([nx,nz],i1+1,i2)))=1;
+        u2=[u;
+            zeros(1,size(u,2))];
+        u2=-u2(1:end-1,:)+u2(2:end,:);
     case -1
-        A(sub2ind([nx*nz,nx*nz],1:nx*nz,sub2ind([nx,nz],i1,i2)))=1;
-        
-        boundary=find(i1==1);
-        i1(boundary)=[];
-        i2(boundary)=[];
-        tt=1:nx*nz;
-        tt(boundary)=[];
-        A(sub2ind([nx*nz,nx*nz],tt,sub2ind([nx,nz],i1-1,i2)))=-1;
+        u2=[zeros(1,size(u,2));
+            u];
+        u2=-1*u2(1:end-1,:)+u2(2:end,:);
     case 3
-        
-        A(sub2ind([nx*nz,nx*nz],1:nx*nz,sub2ind([nx,nz],i1,i2)))=-1;
-        
-        boundary=find(i2==nz);
-        i1(boundary)=[];
-        i2(boundary)=[];
-        tt=1:nx*nz;
-        tt(boundary)=[];
-        A(sub2ind([nx*nz,nx*nz],tt,sub2ind([nx,nz],i1,i2+1)))=1;
+        u2=[u,zeros(size(u,1),1)];
+        u2=-1*u2(:,1:end-1)+u2(:,2:end);
     case -3
-        A(sub2ind([nx*nz,nx*nz],1:nx*nz,sub2ind([nx,nz],i1,i2)))=1;
-        
-        boundary=find(i2==1);
-        i1(boundary)=[];
-        i2(boundary)=[];
-        tt=1:nx*nz;
-        tt(boundary)=[];
-        A(sub2ind([nx*nz,nx*nz],tt,sub2ind([nx,nz],i1,i2-1)))=-1;
+        u2=[zeros(size(u,1),1),u];
+        u2=-1*u2(:,1:end-1)+u2(:,2:end);
 end
 end
 

@@ -120,8 +120,8 @@ Eta55=C55*scale;
 M=2.7;
 
 % source locations
-s1=fix(nx/2)*dx;
-s3=(lp+2)*dz;
+s1=fix(nx/2);
+s3=(lp+2);
 
 % source frequency [Hz]
 freq=10^5*6;
@@ -138,8 +138,8 @@ src3=src1;
 src3=1*[singles];
 
 % receiver locations [m]
-r1=(2:10:(nx-1))*dx;
-r3=(ones(size(r1)))*(nz-lp-1)*dz;
+r1=(2:10:(nx-1));
+r3=(ones(size(r1)))*(nz-lp-1);
 
 % source type. 'D' for directional source. 'P' for P-source.
 source_type='P';

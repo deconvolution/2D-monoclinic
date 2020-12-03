@@ -3,7 +3,7 @@ close all;
 clear all;
 
 % load image
-A=ones(300,300);
+A=ones(150,150);
 
 n=numel(A);
 
@@ -59,8 +59,8 @@ Eta35=C11;
 Eta55=C11;
 
 % Lame constants for solid
-mu=10^9;
-lambda=10^9;
+mu=0;
+lambda=115600000;
 
 % assign solid with its stiffness
 C11(solid)=lambda+2*mu;
@@ -113,8 +113,8 @@ Eta55=C55*scale;
 M=2.7;
 
 % source locations
-s1=fix(nx/2)*dx;
-s3=fix(nz/2)*dz;
+s1=fix(nx/2);
+s3=150;
 
 % source frequency [Hz]
 freq=10^6*1.5;
@@ -124,18 +124,18 @@ singles=rickerWave(freq,dt,nt,M);
 
 % give source signal to x direction
 src1=zeros(nt,1);
-src1=0*[singles];
+src1=1*[singles];
 
 % give source signal to z direction
 src3=src1;
 src3=1*[singles];
 
 % receiver locations [m]
-r1=(2:10:(nx-1))*dx;
-r3=(ones(size(r1)))*(nz-lp-1)*dz;
+r1=(2:10:(nx-1));
+r3=(ones(size(r1)))*(nz-lp-1);
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='D';
+source_type='P';
 
 % point interval in time steps
 plot_interval=50;
