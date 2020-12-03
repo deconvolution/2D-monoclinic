@@ -67,15 +67,18 @@ S=sigmas11;
 
 l=2;
 
+for is=1:length(s1)
+    ts(s1(is),s3(is))=src1(l,is);
+    ts2(s1(is),s3(is))=src3(l,is);
+end
+
 switch source_type
     case 'D'
-        for is=1:length(s1)
-            v1(:,:,3)=v1(:,:,3)+1./rho.*ts;
-            v3(:,:,3)=v3(:,:,3)+1./rho.*ts2;
-        end
+        v1(:,:,3)=v1(:,:,3)+1./rho.*ts;
+        v3(:,:,3)=v3(:,:,3)+1./rho.*ts2;
     case 'P'
-        v1(:,:,3)=v1(:,:,3)+1./rho.*reshape(AA*reshape(ts,[nx*nz,1]),[nx,nz]);
-        v3(:,:,3)=v3(:,:,3)+1./rho.*reshape(AA3*reshape(ts2,[nx*nz,1]),[nx,nz]);
+        v1(:,:,3)=v1(:,:,3)+1./rho.*.5.*diff(ad(ts,1,1),1,1)/dx;
+        v3(:,:,3)=v3(:,:,3)+1./rho.*.5.*diff(ad(ts2,1,3),1,2)/dz;
 end
 %%
 tic;
@@ -156,7 +159,7 @@ for l=2:nt-1
     R=dt*v1(:,:,2)+R;
     S=dt*v3(:,:,2)+S;
     v1(:,:,3)=dt./rho.*(D(sigmas11-p,-1)/dx+beta3.*M...
-        +D(sigmas13,3)/dz+beta1.*N)/dz...
+        +D(sigmas13,3)/dz+beta1.*N)...
         +v1(:,:,3)...
         -dt*(beta1+beta3).*v1(:,:,2)...
         -dt*beta1.*beta3.*R;
@@ -173,13 +176,11 @@ for l=2:nt-1
     
     switch source_type
         case 'D'
-            for is=1:length(s1)
-                v1(:,:,3)=v1(:,:,3)+1./rho.*ts;
-                v3(:,:,3)=v3(:,:,3)+1./rho.*ts2;
-            end
+            v1(:,:,3)=v1(:,:,3)+1./rho.*ts;
+            v3(:,:,3)=v3(:,:,3)+1./rho.*ts2;
         case 'P'
-            v1(:,:,3)=v1(:,:,3)+1./rho.*reshape(.5*AA*reshape(ts,[nx*nz,1]),[nx,nz]);
-            v3(:,:,3)=v3(:,:,3)+1./rho.*reshape(.5*AA3*reshape(ts2,[nx*nz,1]),[nx,nz]);
+            v1(:,:,3)=v1(:,:,3)+1./rho.*.5.*diff(ad(ts,1,1),1,1)/dx;
+            v3(:,:,3)=v3(:,:,3)+1./rho.*.5.*diff(ad(ts2,1,3),1,2)/dz;
     end
     %% fixed boundary condition
     v1(1,:,3)=0;
@@ -217,8 +218,6 @@ for l=2:nt-1
         xlabel('x [m]');
         ylabel('z [m]');
         colorbar;
-        hold on;
-        ax2=scatter(s1*dx,s3*dz,30,[1,0,0],'o');
         hold on;
         for i=1:length(s1)
             ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
