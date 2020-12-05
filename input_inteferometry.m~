@@ -171,7 +171,7 @@ for i=1:length(Nr)
     title(num2str(Nr(i)));
 end
 %%
-for l=22
+for l=30;
 ref=l;
 int_R1=zeros(size(R1,1)*2-1,size(R1,2));
 int_R3=zeros(size(R3,1)*2-1,size(R3,2));
