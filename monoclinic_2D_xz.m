@@ -4,7 +4,7 @@ function [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     lp,nPML,R,...
     rho,C11,C13,C15,C33,C35,C55,...
     Eta11,Eta13,Eta15,Eta33,Eta35,Eta55,...
-    plot_interval,...
+    plot_interval,plot_source,...
     save_figure,path)
 %% create folder for figures
 if ~exist(path,'dir')
@@ -216,9 +216,11 @@ for l=2:nt-1
         ylabel('z [m]');
         colorbar;
         hold on;
-        for i=1:length(s1)
-            ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
-            hold on;
+        if plot_source==1
+            for i=1:length(s1)
+                ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
+                hold on;
+            end
         end
         for i=1:length(r1)
             ax4=plot(r1(i)*dx,r3(i)*dz,'^','color',[0,1,1]);
@@ -270,9 +272,11 @@ for l=2:nt-1
         title('C33 [Pa]');
         colorbar;
         hold on;
-        for i=1:length(s1)
-            ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
-            hold on;
+        if plot_source==1
+            for i=1:length(s1)
+                ax2=plot(s1(i)*dx,s3(i)*dz,'v','color',[1,0,0]);
+                hold on;
+            end
         end
         for i=1:length(r1)
             ax4=plot(r1(i)*dx,r3(i)*dz,'^','color',[0,1,1]);
@@ -287,9 +291,15 @@ for l=2:nt-1
         axis on;
         ax3=plot([lp+1,nx-lp-1]*dx,[lp+1,lp+1]*dz,'color','blue');
         axis on;
-        legend([ax2,ax3,ax4],...
-            'source','PML boundary','receiver',...
-            'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
+        if plot_source==1
+            legend([ax2,ax3,ax4],...
+                'source','PML boundary','receiver',...
+                'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
+        else
+            legend([ax3,ax4],...
+                'PML boundary','receiver',...
+                'Location',[0.5,0.02,0.005,0.002],'orientation','horizontal');
+        end
         if save_figure==1
             print(gcf,[path num2str(n_picture) '.png'],'-dpng','-r200');
             n_picture=n_picture+1;

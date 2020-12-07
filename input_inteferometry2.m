@@ -104,7 +104,7 @@ Eta15=C15*scale;
 Eta33=C33*scale;
 Eta35=C35*scale;
 Eta55=C55*scale;
-ns=60000;
+ns=8000;
 
 % magnitude
 M=2*ones(1,ns);
@@ -135,10 +135,8 @@ src1=zeros(nt,ns);
 src3=zeros(nt,ns);
 
 % source signal
-for is=1:ns
-    src1(t_trigger(is):t_trigger(is)+1999,is)=si(is)*rickerWave(freq(is),dt,2000,M(is));
-    src3(t_trigger(is):t_trigger(is)+1999,is)=si(is)*rickerWave(freq(is),dt,2000,M(is));
-end
+src1=randn(nt,ns);
+src3=src1;
 
 % receiver locations [m]
 r1=20:20:480;
@@ -148,7 +146,7 @@ r3=(ones(size(r1)))*20;
 source_type='P';
 
 % point interval in time steps
-plot_interval=200;
+plot_interval=1000;
 
 % whether to save figure. 1 for save. 0 for not.
 save_figure=1;
