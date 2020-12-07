@@ -17,7 +17,7 @@ fluid=find(A==0);
 dt=10^-3;
 dx=5;
 dz=5;
-nt=4000;
+nt=10^4;
 nx=size(A,1);
 nz=size(A,2);
 
@@ -104,39 +104,51 @@ Eta15=C15*scale;
 Eta33=C33*scale;
 Eta35=C35*scale;
 Eta55=C55*scale;
+ns=5000;
 
-% source
 % magnitude
-M=2.7;
+M=2*ones(1,ns);
+
+% trigger time
+t_trigger=randi([1,nt-2000],[1,ns]);
+
+% sign
+si=randi([-1,1],[1,ns]);
 
 % source locations
 rng(1)
+%{
 tt=[20:40:480,20:40:480,ones(size(20:40:280))*50,ones(size(20:40:280))*480];
 tt2=[ones(size(20:40:480))*50,ones(size(20:40:480))*280,20:40:280,20:40:280];
-s1=tt;
-s3=tt2;
+%}
+s1=randi([20,500-20],[1,ns]);
+s3=randi([20,280],[1,ns]);
 
 % source frequency [Hz]
-freq=10;
+freq=5+sqrt(5)*randn([1,ns]);
+freq(freq<1)=1;
+
+% initialize source signal to x direction
+src1=zeros(nt,ns);
+
+% initialize source signal to z direction
+src3=zeros(nt,ns);
 
 % source signal
-singles=rickerWave(freq,dt,nt,M);
-
-% give source signal to x direction
-src1=0*repmat(singles,[1,length(s1)]);
-
-% give source signal to z direction
-src3=1*repmat(singles,[1,length(s1)]);
+for is=1:ns
+    src1(t_trigger(is):t_trigger(is)+1999,is)=si(is)*rickerWave(freq(is),dt,2000,M(is));
+    src3(t_trigger(is):t_trigger(is)+1999,is)=si(is)*rickerWave(freq(is),dt,2000,M(is));
+end
 
 % receiver locations [m]
 r1=20:20:480;
-r3=(ones(size(r1)))*100;
+r3=(ones(size(r1)))*20;
 
 % source type. 'D' for directional source. 'P' for P-source.
-source_type='D';
+source_type='P';
 
 % point interval in time steps
-plot_interval=100;
+plot_interval=500;
 
 % whether to save figure. 1 for save. 0 for not.
 save_figure=1;
@@ -171,41 +183,28 @@ for i=1:length(Nr)
     title(num2str(Nr(i)));
 end
 %%
-for l=22
-ref=l;
-int_R1=zeros(size(R1,1)*2-1,size(R1,2));
-int_R3=zeros(size(R3,1)*2-1,size(R3,2));
-lag1=zeros(1,size(R1,2));
-lag3=lag1;
-
-for i=1:size(int_R1,2)
-    int_R1(:,i)=xcorr(R1(:,i)',R1(:,ref)');
-    int_R3(:,i)=xcorr(R3(:,i),R3(:,ref));
+for ref=9
+    int_R1=(zeros(size(R1,1)*2-1,size(R1,2)));
+    int_R3=(zeros(size(R3,1)*2-1,size(R3,2)));
+    
+    for i=1:size(int_R1,2)
+        int_R1(:,i)=xcorr(R1(:,i),R1(:,ref));
+        int_R3(:,i)=xcorr(R3(:,i),R3(:,ref));
+    end
+    
+    figure(5);
+    subplot(2,2,1)
+    imagesc([1,Nr],[dt,dt*nt],R1);
+    colorbar;
+    title(num2str(ref));
+    subplot(2,2,2)
+    imagesc([1,Nr],[-dt*nt,dt*nt],int_R1);
+    colorbar;
+    subplot(2,2,3)
+    imagesc([1,Nr],[dt,dt*nt],R3);
+    colorbar;
+    subplot(2,2,4)
+    imagesc([1,Nr],[-dt*nt,dt*nt],int_R3);
+    colorbar;
+    shg;
 end
-
-figure(5);
-subplot(2,2,1)
-imagesc([1,Nr],[dt,dt*nt],R1);
-colorbar;
-title(num2str(l));
-subplot(2,2,2)
-imagesc([1,Nr],[-dt*nt,dt*nt],int_R1);
-colorbar;
-subplot(2,2,3)
-imagesc([1,Nr],[dt,dt*nt],R3);
-colorbar;
-subplot(2,2,4)
-imagesc([1,Nr],[-dt*nt,dt*nt],int_R3);
-colorbar;
-shg;
-end
-%%
-a=zeros(8,8);
-a(5:8,1:4)=flip(eye(4),2);
-a(5:8,5:8)=eye(4);
-b=zeros(15,8);
-for i=1:8
-    b(:,i)=xcorr(a(:,i),a(:,4));
-end
-figure;
-imagesc(b)

@@ -12,8 +12,8 @@ if ~exist(path,'dir')
 end
 n_picture=1;
 %% PML
-beta0=(ones(nx,nz,'single').*1000*(nPML+1)*log(1/R)/2/lp/dx);
-beta1=(zeros(nx,nz,'single'));
+beta0=gpuArray(ones(nx,nz,'single').*1000*(nPML+1)*log(1/R)/2/lp/dx);
+beta1=gpuArray(zeros(nx,nz,'single'));
 beta3=beta1;
 tt=(1:lp)/lp;
 tt2=repmat(reshape(tt,[lp,1]),[1,nz]);
@@ -36,15 +36,15 @@ beta3=beta0.*plane_grad3.^nPML;
 %% source
 ind_sor=sub2ind([nx,nz],s1,s3);
 %% model configuration
-R1=(zeros(nt,length(r1),'single'));
-R3=(zeros(nt,length(r3),'single'));
+R1=gpuArray(zeros(nt,length(r1),'single'));
+R3=gpuArray(zeros(nt,length(r3),'single'));
 ind_rec=sub2ind([nx,nz,3],r1,r3,ones(1,length(r1))*3);
 %% monoclinic 2D solver xz plane (symmetric plane)
-v1=(zeros(nx,nz,3,'single'));
+v1=gpuArray(zeros(nx,nz,3,'single'));
 v3=v1;
-lim2=(zeros(4,2,'single'));
+lim2=gpuArray(zeros(4,2,'single'));
 
-sigmas11=(zeros(nx,nz,'single'));
+sigmas11=gpuArray(zeros(nx,nz,'single'));
 sigmas13=sigmas11;
 sigmas33=sigmas11;
 p=sigmas11;
@@ -71,13 +71,13 @@ l=2;
 ts(ind_sor)=src1(1,:);
 ts2(ind_sor)=src3(1,:);
 
-switch source_type
+switch source_type(is)
     case 'D'
-        v1(:,:,3)=v1(:,:,3)+.5./rho.*ts;
-        v3(:,:,3)=v3(:,:,3)+.5./rho.*ts2;
+        v1(ind_sor+nx*nz*2)=v1(ind_sor+nx*nz*2)+.5./rho.*ts;
+        v3(ind_sor+nx*nz*2)=v3(ind_sor+nx*nz*2)+.5./rho.*ts2;
     case 'P'
-        v1(:,:,3)=v1(:,:,3)+.5./rho.*D(ts,-1)/dx;
-        v3(:,:,3)=v3(:,:,3)+.5./rho.*D(ts2,-3)/dz;
+        v1(:,:,3)=v1(:,:,3)+1./rho.*.5.*D(ts,-1)/dx;
+        v3(:,:,3)=v3(:,:,3)+1./rho.*.5.*D(ts2,-3)/dz;
 end
 %%
 tic;
@@ -171,13 +171,13 @@ for l=2:nt-1
     ts(ind_sor)=src1(l,:);
     ts2(ind_sor)=src3(l,:);
     
-    switch source_type
+    switch source_type(is)
         case 'D'
-            v1(:,:,3)=v1(:,:,3)+1./rho.*ts;
-            v3(:,:,3)=v3(:,:,3)+1./rho.*ts2;
+            v1(ind_sor+nx*nz*2)=v1(ind_sor+nx*nz*2)+1./rho.*ts;
+            v3(ind_sor+nx*nz*2)=v3(ind_sor+nx*nz*2)+1./rho.*ts2;
         case 'P'
-            v1(:,:,3)=v1(:,:,3)+1./rho.*D(ts,-1)/dx;
-            v3(:,:,3)=v3(:,:,3)+1./rho.*D(ts2,-3)/dz;
+            v1(ind_sor+nx*nz*2)=v1(ind_sor+nx*nz*2)+1./rho.*D(ts,-1)/dx;
+            v3(ind_sor+nx*nz*2)=v3(ind_sor+nx*nz*2)+1./rho.*D(ts2,-3)/dz;
     end
     %% fixed boundary condition
     v1(1,:,3)=0;
