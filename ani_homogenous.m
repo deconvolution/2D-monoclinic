@@ -3,7 +3,7 @@ close all;
 clear all;
 
 % load image
-A=ones(150,150);
+A=ones(200,200);
 
 n=numel(A);
 
@@ -20,10 +20,10 @@ solid=find(A==1);
 fluid=find(A==0);
 
 % dimensions
-dt=10^-8;
-dx=5*10^-5;
-dz=5*10^-5;
-nt=5000;
+dt=10^-3;
+dx=10;
+dz=10;
+nt=3000;
 nx=size(A,1);
 nz=size(A,2);
 
@@ -59,8 +59,8 @@ Eta35=C11;
 Eta55=C11;
 
 % Lame constants for solid
-mu=0;
-lambda=115600000;
+mu=10^9;
+lambda=10^9;
 
 % assign solid with its stiffness
 C11(solid)=lambda+2*mu;
@@ -80,6 +80,8 @@ C35(fluid)=0;
 C55(fluid)=0;
 rho(fluid)=900;
 
+rho(:,100:end)=2*rho(:,100:end);
+
 % find surrounding layers
 [a1,b1]=meshgrid(1:lp+2,1:nz);
 [a2,b2]=meshgrid(nx-(lp+2)+1:nx,1:nz);
@@ -87,7 +89,7 @@ rho(fluid)=900;
 [a4,b4]=meshgrid(1:nx,nz-(lp+2)+1:nz);
 IND_air_layer=sub2ind([nx,nz],[reshape(a1,[1,(lp+2)*nz]),reshape(a2,[1,(lp+2)*nz]),reshape(a3,[1,(lp+2)*nx]),reshape(a4,[1,(lp+2)*nx])],...
     [reshape(b1,[1,(lp+2)*nz]),reshape(b2,[1,(lp+2)*nz]),reshape(b3,[1,(lp+2)*nx]),reshape(b4,[1,(lp+2)*nx])]);
-
+clear a1 a2 a3 a4 b1 b2 b3 b4
 % assign surrounding layers with air
 %{
 C11(IND_air_layer)=1145*340^2;
@@ -113,39 +115,52 @@ Eta55=C55*scale;
 M=2.7;
 
 % source locations
-s1=fix(nx/2);
-s3=150;
+s1=80;%fix(nx/2);
+s3=90;%150;
 
 % source frequency [Hz]
-freq=10^6*1.5;
+freq=6;
 
 % source signal
 singles=rickerWave(freq,dt,nt,M);
 
 % give source signal to x direction
 src1=zeros(nt,1);
-src1=1*[singles];
+src1=-1*[singles];
 
 % give source signal to z direction
 src3=src1;
 src3=1*[singles];
 
 % receiver locations [m]
-r1=(2:10:(nx-1));
-r3=(ones(size(r1)))*(nz-lp-1);
+% r1=[25:5:170,25:5:170,ones(size(25:5:170))*25,ones(size(25:5:170))*170];
+% r3=[ones(size(25:5:170))*25,ones(size(25:5:170))*170,25:5:170,25:5:170];
+r1=[25:5:170];
+r3=[ones(size(25:5:170))*25];
 
 % source type. 'D' for directional source. 'P' for P-source.
 source_type='D';
 
 % point interval in time steps
-plot_interval=50;
+plot_interval=200;
 
 % whether to save figure. 1 for save. 0 for not.
 save_figure=1;
 
+% plot source
+plot_source=1;
+
 % figure path
 p2=mfilename('fullpath');
 path=[p2 '/'];
+
+% save wavefield
+save_wavefield=1;
+%% boundary condition
+b1=[];
+b3=[];
+B1=0;
+B3=0;
 %% pass parameters to solver
 [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     r1,r3,...
@@ -153,14 +168,18 @@ path=[p2 '/'];
     lp,nPML,R,...
     rho,C11,C13,C15,C33,C35,C55,...
     Eta11,Eta13,Eta15,Eta33,Eta35,Eta55,...
-    plot_interval,...
-    save_figure,path);
+    b1,b3, ...
+    B1,B3, ...
+    plot_interval,plot_source,...
+    save_figure,path,...
+    save_wavefield);
 %% write to gif
 sources=path;
 delaytime=.2;
 filename='animation';
 gifmaker(filename,delaytime,sources);
 %% plot recordings
+%{
 % Choose numer of reiceivers to plot. Nr is the array of receiver number.
 Nr=[6,10,14,16,18];
 
@@ -172,3 +191,25 @@ for i=1:length(Nr)
     ylabel('v3 [m/s]');
     title(num2str(Nr(i)));
 end
+%}
+%% write recordings
+DATA=R1;
+save([path 'R1.mat'],'DATA');
+save(['./source_reconstruction_ani_homogenous/R1_simu.mat'],'DATA');
+DATA=R3;
+save(['./source_reconstruction_ani_homogenous/R3_simu.mat'],'DATA');
+%%
+figure;
+subplot(2,2,1)
+plot(R1);
+subplot(2,2,2)
+plot(R3);
+subplot(2,2,3)
+plot(singles)
+subplot(2,2,4)
+plot(diff(src3)/dt)
+%
+max(diff(src1)/dt)/max(diff(src3)/dt)
+max(R1)/max(R3)
+figure
+plot(R3./[diff(src3)/dt;0])

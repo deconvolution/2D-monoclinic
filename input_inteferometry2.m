@@ -76,6 +76,7 @@ rng(1)
 rho=1000+sqrt(10000)*randn(nx,nz);
 
 rho(:,180:end)=rho(:,180:end)*2/3;
+rho(1:200,1:100)=rho(1:200,1:100)*4/3;
 
 % find surrounding layers
 [a1,b1]=meshgrid(1:lp+2,1:nz);

@@ -4,13 +4,21 @@ function [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     lp,nPML,R,...
     rho,C11,C13,C15,C33,C35,C55,...
     Eta11,Eta13,Eta15,Eta33,Eta35,Eta55,...
+    b1,b3, ...
+    B1,B3, ...
     plot_interval,plot_source,...
-    save_figure,path)
+    save_figure,path,...
+    save_wavefield)
 %% create folder for figures
 if ~exist(path,'dir')
     mkdir(path)
 end
 n_picture=1;
+if save_wavefield==1
+    if ~exist([path '/wavefield/'],'dir')
+    mkdir([path '/wavefield/'])
+end
+end
 %% PML
 beta0=(ones(nx,nz,'single').*1000*(nPML+1)*log(1/R)/2/lp/dx);
 beta1=(zeros(nx,nz,'single'));
@@ -35,10 +43,16 @@ beta1=beta0.*plane_grad1.^nPML;
 beta3=beta0.*plane_grad3.^nPML;
 %% source
 ind_sor=sub2ind([nx,nz],s1,s3);
+%% boundary
+if 1-isempty(b3)
+    b=sub2ind([nx,nz],b1,b3)+2*nx*nz;
+end
 %% model configuration
 R1=(zeros(nt,length(r1),'single'));
 R3=(zeros(nt,length(r3),'single'));
+
 ind_rec=sub2ind([nx,nz,3],r1,r3,ones(1,length(r1))*3);
+
 %% monoclinic 2D solver xz plane (symmetric plane)
 v1=(zeros(nx,nz,3,'single'));
 v3=v1;
@@ -67,7 +81,7 @@ Q=sigmas11;
 R=sigmas11;
 S=sigmas11;
 
-l=2;
+l=1;
 ts(ind_sor)=src1(1,:);
 ts2(ind_sor)=src3(1,:);
 
@@ -78,6 +92,26 @@ switch source_type
     case 'P'
         v1(:,:,3)=v1(:,:,3)+.5./rho.*D(ts,-1)/dx;
         v3(:,:,3)=v3(:,:,3)+.5./rho.*D(ts2,-3)/dz;
+end
+%% assign boundary
+if 1-isempty(b3)
+    v1(b)=B1(l,:);
+    v3(b)=B3(l,:);
+end
+%% save wavefield
+if save_wavefield==1
+    data=v1(:,:,2);
+    save([path '/wavefield/v1_' num2str(l) '.mat'],'data');
+    
+    data=v3(:,:,2);
+    save([path '/wavefield/v3_' num2str(l) '.mat'],'data');
+    
+    
+    data=v1(:,:,3);
+    save([path '/wavefield/v1_' num2str(l+1) '.mat'],'data');
+    
+    data=v3(:,:,3);
+    save([path '/wavefield/v3_' num2str(l+1) '.mat'],'data');
 end
 %%
 tic;
@@ -168,6 +202,7 @@ for l=2:nt-1
         -dt*(beta1+beta3).*v3(:,:,2)...
         -dt*beta1.*beta3.*S;
     
+    
     ts(ind_sor)=src1(l,:);
     ts2(ind_sor)=src3(l,:);
     
@@ -178,6 +213,11 @@ for l=2:nt-1
         case 'P'
             v1(:,:,3)=v1(:,:,3)+1./rho.*D(ts,-1)/dx;
             v3(:,:,3)=v3(:,:,3)+1./rho.*D(ts2,-3)/dz;
+    end
+    %% assign boundary
+    if 1-isempty(b3)
+    v1(b)=B1(l,:);
+    v3(b)=B3(l,:);
     end
     %% fixed boundary condition
     v1(1,:,3)=0;
@@ -192,6 +232,14 @@ for l=2:nt-1
     %% assign recordings
     R1(l+1,:)=v1(ind_rec);
     R3(l+1,:)=v3(ind_rec);
+    %% save wavefield
+    if save_wavefield==1
+        data=v1(:,:,3);
+        save([path '/wavefield/v1_' num2str(l+1) '.mat'],'data');
+        
+        data=v3(:,:,3);
+        save([path '/wavefield/v3_' num2str(l+1) '.mat'],'data');
+    end
     %% plot
     if mod(l,plot_interval)==0 || l==nt-1
         lim2(1,1)=min(min(v3,[],'all'),lim2(1,1));
