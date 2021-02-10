@@ -20,7 +20,8 @@ if save_wavefield==1
 end
 end
 %% PML
-beta0=(ones(nx,nz,'single').*1000*(nPML+1)*log(1/R)/2/lp/dx);
+vmax=sqrt(C33./rho);
+beta0=(ones(nx,nz,'single').*vmax*(nPML+1)*log(1/R)/2/lp/dx);
 beta1=(zeros(nx,nz,'single'));
 beta3=beta1;
 tt=(1:lp)/lp;

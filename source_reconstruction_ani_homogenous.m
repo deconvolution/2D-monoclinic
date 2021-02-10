@@ -115,11 +115,11 @@ Eta55=C55*scale;
 M=2.7;
 
 % source locations
-s1=[25:5:170];%fix(nx/2);
-s3=[ones(size(25:5:170))*25];%150;
+s1=[25:5:170,25:5:170,ones(size(25:5:170))*25,ones(size(25:5:170))*170];
+s3=[ones(size(25:5:170))*25,ones(size(25:5:170))*170,25:5:170,25:5:170];
 
 % source frequency [Hz]
-freq=5;
+freq=1;
 
 % source signal
 singles=rickerWave(freq,dt,nt,M);
@@ -130,12 +130,12 @@ singles=rickerWave(freq,dt,nt,M);
 p2=mfilename('fullpath');
 path=[p2 '/'];
 load([path 'R1_simu.mat']);
-src1=flip(DATA,1);
+src1=1*flip(DATA,1);
 % give source signal to z direction
 src3=src1;
 src3=0*[singles];
 load([path 'R3_simu.mat']);
-src3=flip(DATA,2);
+src3=1*flip(DATA,2);
 
 % receiver locations [m]
 r1=80;
@@ -164,8 +164,8 @@ load([path 'R1_simu.mat']);
 B1=0*flip(DATA,1);
 load([path 'R3_simu.mat']);
 B3=0*flip(DATA,1);
-b1=[];%[25:5:170,25:5:170,ones(size(25:5:170))*25,ones(size(25:5:170))*170];
-b3=[];%[ones(size(25:5:170))*25,ones(size(25:5:170))*170,25:5:170,25:5:170];
+b1=[];
+b3=[];
 %% pass parameters to solver
 [v1,v3,R1,R3]=monoclinic_2D_xz(dt,dx,dz,nt,nx,nz,...
     r1,r3,...
@@ -213,11 +213,15 @@ plot(singles)
 
 figure;
 subplot(2,1,1)
-plot(R3(end:-1:1)./max(abs(R3)),'color','red');
+plot(dt:dt:dt*nt,R1(end:-1:1)./max(abs(R1)),'color','red');
 hold on;
-plot(singles./max(abs(singles)),'color','black');
+plot(dt:dt:dt*nt,-singles./max(abs(singles)),'color','black');
+ylabel('src1 [N/m^3]');
+xlabel('t [s]');
 subplot(2,1,2)
-plot(R1(end:-1:1)./max(abs(R1)),'color','green');
+plot(dt:dt:dt*nt,R3(end:-1:1)./max(abs(R3)),'color','green');
 hold on;
-plot(-singles./max(abs(singles)),'color','black');
+plot(dt:dt:dt*nt,singles./max(abs(singles)),'color','black');
+ylabel('src3 [N/m^3]');
+xlabel('t [s]');
 %

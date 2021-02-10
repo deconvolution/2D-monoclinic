@@ -62,15 +62,16 @@ Eta55=C11;
 mu=10^9;
 lambda=10^9;
 
-% assign solid with its stiffness
-C11(solid)=lambda+2*mu;
-C13(solid)=lambda;
-C15(solid)=0*lambda;
-C33(solid)=lambda+2*mu;
-C35(solid)=0*lambda;
-C55(solid)=mu;
-rho(solid)=10^3;
 
+% assign solid with its stiffness
+C11(:)=lambda+2*mu;
+C13(:)=lambda;
+C15(:)=0*lambda;
+C33(:)=lambda+2*mu;
+C35(:)=0*lambda;
+C55(:)=mu;
+rho(:)=10^3;
+%{
 % assign air with its stiffness
 C11(fluid)=lambda;
 C13(fluid)=lambda;
@@ -81,7 +82,7 @@ C55(fluid)=0;
 rho(fluid)=900;
 
 rho(:,100:end)=2*rho(:,100:end);
-
+%}
 % find surrounding layers
 [a1,b1]=meshgrid(1:lp+2,1:nz);
 [a2,b2]=meshgrid(nx-(lp+2)+1:nx,1:nz);
@@ -119,7 +120,7 @@ s1=80;%fix(nx/2);
 s3=90;%150;
 
 % source frequency [Hz]
-freq=6;
+freq=1;
 
 % source signal
 singles=rickerWave(freq,dt,nt,M);
@@ -133,10 +134,10 @@ src3=src1;
 src3=1*[singles];
 
 % receiver locations [m]
-% r1=[25:5:170,25:5:170,ones(size(25:5:170))*25,ones(size(25:5:170))*170];
-% r3=[ones(size(25:5:170))*25,ones(size(25:5:170))*170,25:5:170,25:5:170];
-r1=[25:5:170];
-r3=[ones(size(25:5:170))*25];
+r1=[25:5:170,25:5:170,ones(size(25:5:170))*25,ones(size(25:5:170))*170];
+r3=[ones(size(25:5:170))*25,ones(size(25:5:170))*170,25:5:170,25:5:170];
+%r1=[25:5:170];
+%r3=[ones(size(25:5:170))*25];
 
 % source type. 'D' for directional source. 'P' for P-source.
 source_type='D';
